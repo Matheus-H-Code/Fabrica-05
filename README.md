@@ -1,4 +1,4 @@
-<h1 align="center">Fábrica de Projetos 5 (a definir nome)</h1>
+<h1 align="center">Rubik's</h1>
 <p align="center">
 <a href="#">Sobre</a> |
 <a href="#">Prototipação</a> |
