@@ -1,36 +1,47 @@
 
-<div class="ml-4 p-3" id='external-events' style="">
-    <p class="text-center">
-        <strong>Aulas restantes</strong>
-    </p>
 
-    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-        <div class='fc-event-main'>Português</div>
-    </div>
-    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-        <div class='fc-event-main'>Matemática</div>
-    </div>
-    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-        <div class='fc-event-main'>História</div>
-    </div>
-    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-        <div class='fc-event-main'>Geografia</div>
-    </div>
-    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-        <div class='fc-event-main'>Biologia</div>
-    </div>
-
-    <p>
-        <input type='checkbox' id='drop-remove' />
-        <label for='drop-remove'>Remover após inserir</label>
-    </p>
-
-</div>
   
-  <div id='calendar-container'>
-    <div id='calendar'></div>
-  </div>
-        
+<div id='calendar-container'>
+<div id='calendar'></div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalSelecaoTurma" role="dialog" aria-labelledby="modalUsuarioLabel" aria-hidden="true" data-interval="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSelecaoTurmaLabel"></h5>
+                <button id="fecharModalSelecaoTurma" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="carouselUsuario#IDFORM#">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label style="margin-bottom: 10px">Cursos</label>
+                                <select id="selectCurso" class="form-control" style="width: 100%;">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label style="margin-bottom: 10px">Turmas</label>
+                                <select id="selectTurma" class="form-control" disabled style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <a id="btnSelecionarTurma" class="btn btn-primary text-white">Selecionar</a>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>   
 
 
     <script>
@@ -60,7 +71,7 @@
 
           var calendar = new Calendar(calendarEl, {
               headerToolbar: {
-              left: 'prev,next today',
+              left: '',
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay'
               },

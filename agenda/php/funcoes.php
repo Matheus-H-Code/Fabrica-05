@@ -12,6 +12,11 @@ if (!empty($_POST["IDSUSUARIO"])) {
 } else {
     $idsUsuario = '';
 }
+if (!empty($_POST["IDSTURMA"])) {
+    $idsTurma = $_POST["IDSTURMA"];
+} else {
+    $idsTurma = '';
+}
 if (!empty($_POST["IDSCURSO"])) {
     $idsCurso = $_POST["IDSCURSO"];
 } else {
@@ -171,6 +176,23 @@ else if ($tipo == 'buscarTurmas') {
     $retorno = $result->fetchAll(PDO::FETCH_ASSOC);
 }
 
+else if ($tipo == 'buscarTurmasPorIdCurso') {
+
+    $sqlCurso = "SELECT 
+                T.idTurma AS IDTURMA, 
+                T.nome AS NOME, 
+                T.status AS STATUS
+            FROM turma T
+            INNER JOIN planoCabecalho PC ON PC.idTurma = T.idTurma
+            INNER JOIN curso C ON C.idCurso = PC.idCurso
+            WHERE T.status = 'A'
+            AND C.idCurso = ?";
+
+    $resultCurso = $pdo->prepare($sqlCurso);
+    $resultCurso->execute([$idsCurso]);
+    $retorno = $resultCurso->fetchAll(PDO::FETCH_ASSOC);
+}
+
 else if ($tipo == 'buscarDisciplinas') {
 
     $sql = "SELECT 
@@ -181,7 +203,7 @@ else if ($tipo == 'buscarDisciplinas') {
                 (   SELECT 
                         NOME 
                     FROM usuario U 
-                    WHERE U.idUsuario = C.idUsuario
+                    WHERE U.idUsuario = C.idCoordenador
                 ) AS COORDENADOR,
                 (   SELECT 
                         NOME 
@@ -197,6 +219,24 @@ else if ($tipo == 'buscarDisciplinas') {
     $result = $pdo->query( $sql );
     $retorno = $result->fetchAll(PDO::FETCH_ASSOC);
 }
+
+else if ($tipo == 'buscarDisciplinasPorIdTurma') {
+
+    $sql = "SELECT 
+                PCA.nome AS NOME
+            FROM planocabecalho PC
+            INNER JOIN PlanoCorpoAulas PCA ON PCA.IdPlanoCabecalho = PC.IdPlanoCabecalho
+            INNER JOIN turma T ON T.idTurma = PC.idTurma
+            WHERE PC.status = 'A'
+            AND T.IDTURMA = ?
+            AND PC.IDCURSO = ?
+            ";
+    $result = $pdo->prepare($sql);
+    $result->execute([$idsTurma, $idsCurso]);
+    $retorno = $result->fetchAll(PDO::FETCH_ASSOC);
+
+}
+
 
 else if ($tipo == 'editarUsuario') {
 

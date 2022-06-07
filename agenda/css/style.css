@@ -73,14 +73,12 @@ hr.index {
 /*}  */
 
 #external-events {
-    position: fixed;
     z-index: 2;
-    top: 300px;
-    left: 250px;
-    width: 150px;
+    margin-top: 50px;
+    width: 200px !important;
     padding: 0 10px;
-    border: 1px solid #ccc;
-    background: #eee;
+    /* border: 1px solid #ccc;
+    background: #eee; */
 }
   
 #external-events .fc-event {
@@ -91,12 +89,12 @@ hr.index {
 #calendar-container {
     position: relative;
     z-index: 1;
-    margin-left: 200px;
+    margin-left: 100px;
 }
   
 #calendar {
-    max-width: 1100px;
-    margin: 20px auto;
+  margin-right: 100px !important;
+  max-width: 1000px !important;
 }
 
 .fc-button {

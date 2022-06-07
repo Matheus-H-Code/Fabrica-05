@@ -39,8 +39,6 @@
 
 <body>
 
-    
-
     <div id="siteBase" class="wrapper">
 
         <?php include "../navbar.html"; ?>

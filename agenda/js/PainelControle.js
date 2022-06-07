@@ -160,7 +160,6 @@ function buscarDisciplinas(tipoListagem = '', filtros = '') {
 }
 
 function montaAbaPainelControle(tipoUSuario) {
-    var titulo = '';
     let templateNavPainelControle = navPainelControle;
     templateNavPainelControle = templateNavPainelControle.replace('#TELA#',  tela);
     templateNavPainelControle = templateNavPainelControle.replace('#TELA#',  tela);
@@ -169,23 +168,27 @@ function montaAbaPainelControle(tipoUSuario) {
         case 'usuario':
             buscarUsuarios('templateUsuarios');
             $( "#navControlePainelBtnCadastro" ).addClass( " d-none" );
-            titulo = 'Editar usuário';
             break;
         
         case 'curso':
             buscarCursos();
-            titulo = 'Editar curso';
             break;
 
         case 'turma':
             buscarTurmas();
-            titulo = 'Editar turma';
             break;
 
         case 'disciplina':
             buscarDisciplinas();
             $( "#navControlePainelBtnDetalhes" ).addClass( " d-block" );
-            titulo = 'Editar disciplina';
+            break;
+        
+        case 'calendario':
+            $( "#navControlePainelBtnSelecaoCalendario" ).addClass( " d-block" );
+            $( "#navControlePainelBtnSalvarAulas" ).addClass( " d-block" );
+            $( "#navControlePainelBtnCadastro" ).addClass( " d-none" );
+            $( "#navControlePainelBtnEditar" ).addClass( " d-none" );
+            $( "#navControlePainelBtnApagar" ).addClass( " d-none" );
             break;
 
         default:
@@ -259,7 +262,7 @@ function acaoPainelControle(tipo) {
         idsSelecionados.push($(this).attr("id"));
     });
     
-    if(idsSelecionados.length > 0 || tipo == 'Cadastro') {
+    if(idsSelecionados.length > 0 || (tipo == 'Cadastro' || tipo == 'SelecaoCalendario')) {
        var filtro = ""
         switch (tela) {
             case 'usuario':
@@ -431,6 +434,32 @@ function acaoPainelControle(tipo) {
             case 'disciplina':
     
                 break;
+            case 'calendario':
+                $("#selectCurso").empty();
+                    // buscarUsuarios('listagemTurma', 'turma');
+                    $("#modalSelecaoTurmaLabel").text("Seleção de aulas");
+                    $("#btnTurmaModal").text("Cadastrar");
+                    $('#modalSelecaoTurma').modal('show');
+
+                    $.ajax({
+                        url : "../php/funcoes.php",
+                        type : 'post',
+                        data : {
+                            TIPO : 'buscarCursos'
+                        },
+                        success : function(data){
+                            $(`#selectCurso`).append(`<option selected disabled>Selecione um curso</option>`);
+                            data = JSON.parse(data);
+                            $.each(data, function(key, curso) {
+                                $(`#selectCurso`).append(`<option value="${curso.IDCURSO}"> ${curso.NOME}</option>`);
+                            });
+                        }
+                    })
+
+                $( "#fecharModalSelecaoTurma" ).click(function() {
+                    $('#modalSelecaoTurma').modal('hide');
+                });
+                break;
     
             default:
                 break; 
@@ -462,11 +491,78 @@ $( document ).ready(function() {
         pause: true,
         interval: false
     });
+    $('#selectTurma').select2();
+    $('#selectTurma').select2({
+        dropdownParent: $('#modalSelecaoTurma')
+    });
+
+    $('#selectCurso').select2();
+    $('#selectCurso').select2({
+        dropdownParent: $('#modalSelecaoTurma')
+    });
+
+    // In your Javascript (external .js resource or <script> tag)
+
+    $( "#btnSelecionarTurma" ).click(function() {
+        $("#eventsCalendario").empty();
+        var idTurma = $(`#selectTurma`).val();
+        var idCurso = $(`#selectCurso`).val();
+        $.ajax({
+            url : "../php/funcoes.php",
+            type : 'post',
+            data : {
+                TIPO : 'buscarDisciplinasPorIdTurma',
+                IDSTURMA: idTurma,
+                IDSCURSO: idCurso
+            },
+            success : function(data){
+                $( "#listagemAulas" ).addClass( " d-block" );
+                data = JSON.parse(data);
+                $.each(data, function(key, disciplina) {
+                    let templateEventTurmaCalendario = eventTurmaCalendario;
+
+                    templateEventTurmaCalendario = templateEventTurmaCalendario.replace('#ID#',  disciplina.IDDISCIPLINA);
+                    templateEventTurmaCalendario = templateEventTurmaCalendario.replace('#NOME#',  disciplina.NOME);
+                    $('#eventsCalendario').append(templateEventTurmaCalendario);
+                });
+            }
+        })
+    });
+
+
+    $( "#selectCurso" ).change(function() {
+        $("#selectTurma").empty();
+        var idCurso = $(`#selectCurso`).val();
+        $('#selectTurma').prop('disabled', false);
+
+        $.ajax({
+            url : "../php/funcoes.php",
+            type : 'post',
+            data : {
+                TIPO : 'buscarTurmasPorIdCurso',  
+                IDSCURSO : idCurso
+            },
+            success : function(data){
+                $(`#selectTurma`).append(`<option selected disabled>Selecione uma turma</option>`);
+                data = JSON.parse(data);
+                $.each(data, function(key, turma) {
+                    $(`#selectTurma`).append(`<option value="${turma.IDTURMA}"> ${turma.NOME}</option>`);
+                });
+            }
+       })
+
+    });
     
-// In your Javascript (external .js resource or <script> tag)
+    $( "#navControlePainelBtnSalvarAulas" ).click(function() {
+        alert("Salvo com sucesso");
+        var eventSources = calendarEl.getEventSources(); 
+        var len = eventSources.length;
+        for (var i = 0; i < len; i++) { 
+            eventSources[i].remove(); 
+        } 
+    });
 
-
+     
     
 
 });
-
